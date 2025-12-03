@@ -1,16 +1,30 @@
 import * as mg from "mingine-engine";
+import type { PickPartial } from "./utility";
 
 function d(degrees: number) {
 	return (degrees * Math.PI) / 180;
 }
 
-export function createHazel(renderScale: number, o: mg.CustomObjectCreator) {
+export type HazelCreator = PickPartial<
+	Omit<mg.CustomObjectCreator, "blOffset" | "collider">,
+
+	"mass" | "momentOfInertia" | "pos" | "restitutionCoeff"
+>;
+
+export function createHazel(renderScale: number, o: HazelCreator) {
 	const width = 859 / 1670;
 
 	return mg.createObject({
+		mass: 1,
+		momentOfInertia: (1 + width ** 2) / 12, // don't think too hard abt it
+		pos: mg.v(1, 0.75),
+		restitutionCoeff: 0.8,
+
 		...o,
+
 		blOffset: mg.v(width / 2, 1 / 2),
 		styles: {
+			...o.styles,
 			width: `${width * renderScale}px`,
 			height: `${1 * renderScale}px`,
 			background: "url(https://cdn.hyrule.pics/30e82fed8.png",
@@ -115,9 +129,5 @@ export function createHazel(renderScale: number, o: mg.CustomObjectCreator) {
 				)
 			)
 		),
-		mass: 1,
-		momentOfInertia: (1 + width ** 2) / 12, // don't think too hard abt it
-		pos: mg.v(1, 0.75),
-		restitutionCoeff: 0.8,
 	});
 }
