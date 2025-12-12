@@ -7,7 +7,6 @@ function d(degrees: number) {
 
 export type HazelCreator = PickPartial<
 	Omit<mg.CustomObjectCreator, "blOffset" | "collider">,
-
 	"mass" | "momentOfInertia" | "pos" | "restitutionCoeff"
 >;
 
@@ -18,7 +17,13 @@ export function createHazel(renderScale: number, o: HazelCreator) {
 		mass: 1,
 		momentOfInertia: (1 + width ** 2) / 12, // don't think too hard abt it
 		pos: mg.v(1, 0.75),
-		restitutionCoeff: 0.8,
+		restitutionCoeff: .9,
+
+		forces: [
+			mg.forceModels.weight(mg.consts.earthGravity),
+			mg.forceModels.airDrag(mg.vo(), mg.consts.earthAirDensity, width, 1),
+			mg.forceModels.simpleDamping(1, 0.99),
+		],
 
 		...o,
 
@@ -30,8 +35,8 @@ export function createHazel(renderScale: number, o: HazelCreator) {
 			background: "url(https://cdn.hyrule.pics/30e82fed8.png",
 			"background-size": "cover",
 		},
-		//mg.createColliderRect(mg.vo(), mg.v(width, 1), 0),
-		collider: mg.createColliderComposite(
+		collider: mg.createColliderRect(mg.vo(), mg.v(width, 1), 0)
+		/*mg.createColliderComposite(
 			// head and ears
 			mg.createColliderComposite(
 				// head
@@ -128,6 +133,6 @@ export function createHazel(renderScale: number, o: HazelCreator) {
 					)
 				)
 			)
-		),
+		)*/,
 	});
 }
